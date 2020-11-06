@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>trans-staff</name>
+    <name>trans-fakta</name>
     <description />
     <extended_description />
     <trans_version />
@@ -427,10 +427,10 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2020/10/23 15:44:57.434</created_date>
+    <created_date>2020/11/06 15:54:24.234</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2020/10/23 15:44:57.434</modified_date>
-    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
+    <modified_date>2020/11/06 15:54:24.234</modified_date>
+    <key_for_session_key />
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
@@ -544,6 +544,26 @@
   <order>
     <hop>
       <from>Table input</from>
+      <to>format tanggal</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>format tanggal</from>
+      <to>ganti tipe</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>ganti tipe</from>
+      <to>lookup customer</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>lookup customer</from>
+      <to>lookup staff</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>lookup staff</from>
       <to>Add sequence</to>
       <enabled>Y</enabled>
     </hop>
@@ -553,6 +573,224 @@
       <enabled>Y</enabled>
     </hop>
   </order>
+  <step>
+    <name>Table input</name>
+    <type>TableInput</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>classic</connection>
+    <sql>select amount, paymentDate, payments.customerNumber, 
+  salesRepEmployeeNumber
+from payments
+join customers on (
+  customers.customerNumber = payments.customerNumber
+)</sql>
+    <limit>0</limit>
+    <lookup />
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>96</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>format tanggal</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>paymentDate</name>
+        <rename>paymentDate</rename>
+        <type>String</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>yyyyMMdd</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale />
+        <date_format_timezone />
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding />
+        <decimal_symbol />
+        <grouping_symbol />
+        <currency_symbol />
+        <storage_type />
+      </meta>
+    </fields>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>240</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>ganti tipe</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>paymentDate</name>
+        <rename>paymentDate</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask>#</conversion_mask>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale />
+        <date_format_timezone />
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding />
+        <decimal_symbol />
+        <grouping_symbol />
+        <currency_symbol />
+        <storage_type />
+      </meta>
+    </fields>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>48</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>lookup customer</name>
+    <type>DBLookup</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>dwh</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema />
+      <table>dim_customer</table>
+      <orderby />
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>customerNumber</name>
+        <field>bk_costumer</field>
+        <condition>=</condition>
+        <name2 />
+      </key>
+      <value>
+        <name>id</name>
+        <rename>sk_customer</rename>
+        <default />
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>144</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>lookup staff</name>
+    <type>DBLookup</type>
+    <description />
+    <distribute>Y</distribute>
+    <custom_distribution />
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name />
+    </partitioning>
+    <connection>dwh</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema />
+      <table>dim_staff</table>
+      <orderby />
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>salesRepEmployeeNumber</name>
+        <field>employeenumber</field>
+        <condition>=</condition>
+        <name2 />
+      </key>
+      <value>
+        <name>id</name>
+        <rename>sk_staff</rename>
+        <default />
+        <type>Integer</type>
+      </value>
+    </lookup>
+    <cluster_schema />
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>240</xloc>
+      <yloc>144</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
   <step>
     <name>Add sequence</name>
     <type>Sequence</type>
@@ -582,8 +820,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>272</xloc>
-      <yloc>80</yloc>
+      <xloc>96</xloc>
+      <yloc>144</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -603,7 +841,7 @@
     <update_bypassed>N</update_bypassed>
     <lookup>
       <schema />
-      <table>dim_staff</table>
+      <table>fakta_pembayaran</table>
       <key>
         <name>valuename</name>
         <field>id</field>
@@ -616,38 +854,23 @@
         <update>N</update>
       </value>
       <value>
-        <name>name</name>
-        <rename>name</rename>
+        <name>amount</name>
+        <rename>amount</rename>
         <update>N</update>
       </value>
       <value>
-        <name>officecode</name>
-        <rename>officeCode</rename>
+        <name>sk_customer</name>
+        <rename>sk_customer</rename>
         <update>N</update>
       </value>
       <value>
-        <name>jobtitle</name>
-        <rename>jobtitle</rename>
+        <name>sk_waktu</name>
+        <rename>paymentDate</rename>
         <update>N</update>
       </value>
       <value>
-        <name>city</name>
-        <rename>city</rename>
-        <update>N</update>
-      </value>
-      <value>
-        <name>state</name>
-        <rename>state</rename>
-        <update>N</update>
-      </value>
-      <value>
-        <name>country</name>
-        <rename>country</rename>
-        <update>N</update>
-      </value>
-      <value>
-        <name>employeenumber</name>
-        <rename>employeeNumber</rename>
+        <name>sk_staff</name>
+        <rename>sk_staff</rename>
         <update>N</update>
       </value>
     </lookup>
@@ -659,46 +882,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>80</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Table input</name>
-    <type>TableInput</type>
-    <description />
-    <distribute>Y</distribute>
-    <custom_distribution />
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name />
-    </partitioning>
-    <connection>classic</connection>
-    <sql>select employeeNumber, 
-  concat(firstName, ' ', lastName) name,
-  employees.officeCode, 
-  jobtitle, city, state, country
-from employees
-join offices on (
-  offices.officeCode = employees.officeCode
-)</sql>
-    <limit>0</limit>
-    <lookup />
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-    <cluster_schema />
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
       <xloc>96</xloc>
-      <yloc>80</yloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
